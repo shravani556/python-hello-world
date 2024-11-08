@@ -1,0 +1,23 @@
+trigger:
+  branches:
+    include:
+      - main  # Specify the branch you're working on
+
+pool:
+  name: Default
+  demands:
+    - agent.name -equals techzoos
+
+steps:
+  - script: |
+      echo "Setting up Python environment"
+      sudo apt update
+      sudo apt install -y python3 python3-pip
+      python3 --version
+    displayName: 'Install Python'
+
+  - script: |
+      echo "Running HelloWorld.py"
+      python3 HelloWorld.py
+    displayName: 'Run HelloWorld'
+    workingDirectory: $(Build.SourcesDirectory)
