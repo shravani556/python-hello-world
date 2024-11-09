@@ -21,3 +21,18 @@ steps:
       python3 HelloWorld.py
     displayName: 'Run HelloWorld'
     workingDirectory: $(Build.SourcesDirectory)
+
+  # Step to create the artifact directory and copy the HelloWorld.py file
+  - script: |
+      echo "Creating artifact directory"
+      mkdir -p $(Build.ArtifactStagingDirectory)/python_app
+      cp HelloWorld.py $(Build.ArtifactStagingDirectory)/python_app/
+    displayName: 'Prepare Artifact'
+
+  # Publish the artifact
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: $(Build.ArtifactStagingDirectory)/python_app
+      artifactName: HelloWorldArtifact
+      publishLocation: 'Container'
+    displayName: 'Publish Artifact'
