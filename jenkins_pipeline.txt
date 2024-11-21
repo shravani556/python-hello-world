@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // Clone the GitHub repository
+                git url: 'https://github.com/shravani556/python-hello-world.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                // SSH into your server and build the Docker image
+                sshagent(['6c03ab46-a111-41d1-bfbc-5b8fe1bf0e93	']) {
+                    sh '''
+                    ssh gova@210.18.189.94 << EOF
+                    cd /home/gova/python-hello-world
+                    docker build -t flask-hello-world:latest .
+                    EOF
+                    '''
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sshagent(['6c03ab46-a111-41d1-bfbc-5b8fe1bf0e93	']) {
+                    sh '''
+                    ssh gova@210.18.189.94 << EOF
+                    docker run -d -p 8785:5000 --name flask-hello-world flask-hello-world:latest
+                    EOF
+                    '''
+                }
+            }
+        }
+    }
+}
